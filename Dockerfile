@@ -26,6 +26,9 @@ RUN cd /home/ubuntu/catkin_ws/src  &&\
 	source /home/ubuntu/catkin_ws/devel/setup.bash &&\
 	catkin_make
 
+USER root
+RUN wget -q https://go.microsoft.com/fwlink/?LinkID=760868 -O code.deb && apt install ./code.deb -f -y
 
+USER ubuntu
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 RUN echo "source /home/ubuntu/catkin_ws/devel/setup.bash" >> ~/.bashrc
