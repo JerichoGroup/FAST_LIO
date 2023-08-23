@@ -1,0 +1,29 @@
+FROM dustynv/ros:noetic-desktop-l4t-r35.3.1
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+
+RUN apt-get update && apt-get upgrade -y
+
+RUN apt-get update && apt-get install -y git &&\
+        apt-get install -y libpcl-dev && apt-get install -y cmake &&\
+        apt-get install -y ros-noetic-teleop-twist-keyboard && \
+        sudo apt install libeigen3-dev
+
+RUN apt install ros-noetic-pcl-ros -y && apt install libnav-msgs-dev -y && apt install ros-noetic-nav-msgs -y && \
+  apt install ros-noetic-eigen-conversions -y && apt install ros-visualization-msgs -y && apt install ros-noetic-common-msgs -y && \
+  apt install rviz -y
+
+RUN cd /workspace/ros_catkin_ws/src &&\
+        git clone https://github.com/Livox-SDK/livox_ros_driver.git && cd ../ && \
+        source /opt/ros/noetic/setup.bash && catkin_make --only-pkg-with-deps livox_ros_driver
+
+RUN cd /workspace/ros_catkin_ws/src  &&\
+        git clone https://github.com/JerichoGroup/FAST_LIO.git &&\
+        cd FAST_LIO && git submodule update --init && cd ../.. &&\
+        source /opt/ros/noetic/setup.bash &&\
+        source /workspace/ros_catkin_ws/devel/setup.bash &&\
+        catkin_make --only-pkg-with-deps fast_lio -j1
+
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+RUN echo "source /workspace/ros_catkin_ws/devel/setup.bash" >> ~/.bashrc
